@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🦞 德胧 AI 任务指挥中心</title>
+  <meta name="description" content="德胧 AI Native 多龙虾协作任务看板">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 900px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    h1 { color: #333; margin-bottom: 10px; font-size: 28px; }
+    .subtitle { color: #666; margin-bottom: 30px; font-size: 16px; }
+    .status-card { background: #f8f9fa; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    .status-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #e9ecef; }
+    .status-item:last-child { border-bottom: none; }
+    .status-label { color: #555; font-weight: 500; }
+    .status-value { color: #333; font-weight: 600; }
+    .status-ok { color: #28a745; }
+    .btn { display: block; width: 100%; padding: 15px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; border-radius: 10px; text-align: center; font-weight: 600; font-size: 18px; margin-bottom: 15px; transition: transform 0.2s; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-secondary { background: #6c757d; font-size: 16px; }
+    .lobster-list { margin-top: 20px; }
+    .lobster-item { display: flex; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 12px; margin-bottom: 12px; transition: transform 0.2s; }
+    .lobster-item:hover { transform: translateX(5px); }
+    .lobster-avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px; margin-right: 15px; flex-shrink: 0; }
+    .lobster-info { flex: 1; }
+    .lobster-name { font-weight: 600; color: #333; font-size: 16px; }
+    .lobster-fullname { font-size: 13px; color: #999; margin-bottom: 5px; }
+    .lobster-role { font-size: 14px; color: #666; }
+    .lobster-meta { display: flex; gap: 15px; margin-top: 8px; font-size: 12px; color: #999; }
+    .lobster-status { padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+    .status-active { background: #d4edda; color: #155724; }
+    .status-inactive { background: #f8d7da; color: #721c24; }
+    .footer { margin-top: 30px; text-align: center; color: #999; font-size: 14px; }
+    .refresh-info { background: #e7f3ff; padding: 10px 20px; border-radius: 10px; margin-bottom: 20px; text-align: center; color: #0066cc; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🦞 德胧 AI 任务指挥中心</h1>
+    <p class="subtitle">德胧 AI Native 多龙虾协作系统 · 实时状态扫描</p>
+    
+    <div class="refresh-info">
+      🔄 状态每 5 分钟自动更新 · 下次扫描：<span id="next-scan">--</span>
+    </div>
+
+    <div class="status-card">
+      <div class="status-item">
+        <span class="status-label">📊 LobsterBoard 服务</span>
+        <span class="status-value status-ok">✅ 运行中 (端口 3001)</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">🌐 GitHub Pages</span>
+        <span class="status-value status-ok">✅ 已部署</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">⏰ 实时扫描</span>
+        <span class="status-value status-ok">✅ 每 5 分钟</span>
+      </div>
+    </div>
+
+    <a href="http://43.128.106.187:3001" class="btn">🚀 访问 LobsterBoard 看板</a>
+    <a href="https://github.com/chaoliuzhu65-tech/lobsterboard" class="btn btn-secondary">📦 GitHub 仓库</a>
+
+    <div class="lobster-list">
+      <h3 style="margin-bottom: 15px; color: #333;">🦞 四只龙虾实时状态</h3>
+      
+      <div class="lobster-item">
+        <div class="lobster-avatar">小</div>
+        <div class="lobster-info">
+          <div class="lobster-name">小小（arkclaw 版 openclaw）</div>
+          <div class="lobster-fullname">OPEN ID: ou_baa63dbd5ae37ce888ca4b76f6b0b225</div>
+          <div class="lobster-role">夜间监控 + 定时复盘</div>
+          <div class="lobster-meta">
+            <span>📅 下次任务：23:00 夜间监控</span>
+            <span id="xiaoxiao-time">⏰ 最后激活：81 分钟前</span>
+          </div>
+        </div>
+        <span class="lobster-status status-inactive" id="xiaoxiao-status">⏸️ 未激活</span>
+      </div>
+
+      <div class="lobster-item">
+        <div class="lobster-avatar">八</div>
+        <div class="lobster-info">
+          <div class="lobster-name">小八（workbuddy 应用机器人）</div>
+          <div class="lobster-fullname">OPEN ID: ou_f4e205a3dff0d443124ad2aa70996509</div>
+          <div class="lobster-role">跨平台通信与同步</div>
+          <div class="lobster-meta">
+            <span>📅 下次任务：待配置</span>
+            <span id="xiaoba-time">⏰ 最后激活：6 分钟前</span>
+          </div>
+        </div>
+        <span class="lobster-status status-active" id="xiaoba-status">✅ 已激活</span>
+      </div>
+
+      <div class="lobster-item">
+        <div class="lobster-avatar">妙</div>
+        <div class="lobster-info">
+          <div class="lobster-name">小妙（gemini 应用机器人）</div>
+          <div class="lobster-fullname">OPEN ID: ou_37847be7cf4fd3bb176c2a165653894a</div>
+          <div class="lobster-role">定时任务与调度</div>
+          <div class="lobster-meta">
+            <span>📅 下次任务：07:00 Cron 检查</span>
+            <span>💡 妙搭 AI 运行中</span>
+            <span id="xiaomiao-time">⏰ 最后激活：6 分钟前</span>
+          </div>
+        </div>
+        <span class="lobster-status status-active" id="xiaomiao-status">✅ 已激活</span>
+      </div>
+
+      <div class="lobster-item">
+        <div class="lobster-avatar">云</div>
+        <div class="lobster-info">
+          <div class="lobster-name">小云（腾讯云 Openclaw 机器人）</div>
+          <div class="lobster-fullname">OPEN ID: ou_2e9ea45d91ca32a2f03694301925f36f</div>
+          <div class="lobster-role">任务管理与状态看板</div>
+          <div class="lobster-meta">
+            <span>✅ OpenClaw 2026.4.5</span>
+            <span>📅 下次任务：06:30 LobsterBoard 更新</span>
+            <span id="xiaoyun-time">⏰ 最后激活：81 分钟前</span>
+          </div>
+        </div>
+        <span class="lobster-status status-inactive" id="xiaoyun-status">⏸️ 未激活</span>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>部署时间：2026-04-07 10:20 | 最后更新：<span id="last-update">--</span></p>
+      <p>德胧 AI Native 项目 · 天津瑞湾开元名都酒店</p>
+      <p>实时扫描脚本：/root/.openclaw/workspace/skills/scan-lobster-status.sh</p>
+    </div>
+  </div>
+
+  <script>
+    // 自动刷新状态
+    async function fetchStatus() {
+      try {
+        const response = await fetch('http://43.128.106.187:3001/data/lobster-status.json');
+        const data = await response.json();
+        
+        // 更新各龙虾状态
+        updateLobster('xiaoxiao', data.lobsters.xiaoxiao);
+        updateLobster('xiaoba', data.lobsters.xiaoba);
+        updateLobster('xiaomiao', data.lobsters.xiaomiao);
+        updateLobster('xiaoyun', data.lobsters.xiaoyun);
+        
+        document.getElementById('last-update').textContent = new Date().toLocaleTimeString('zh-CN');
+        
+        // 计算下次扫描时间
+        const now = new Date();
+        const nextScan = new Date(now.getTime() + (5 - (now.getMinutes() % 5)) * 60000);
+        document.getElementById('next-scan').textContent = nextScan.toLocaleTimeString('zh-CN');
+      } catch (e) {
+        console.error('状态更新失败:', e);
+      }
+    }
+    
+    function updateLobster(name, lobster) {
+      const statusEl = document.getElementById(name + '-status');
+      const timeEl = document.getElementById(name + '-time');
+      
+      if (lobster.status === 'active') {
+        statusEl.className = 'lobster-status status-active';
+        statusEl.textContent = '✅ 已激活';
+      } else {
+        statusEl.className = 'lobster-status status-inactive';
+        statusEl.textContent = '⏸️ 未激活';
+      }
+      
+      timeEl.textContent = '⏰ 最后激活：' + lobster.lastHeartbeat;
+    }
+    
+    // 首次加载
+    fetchStatus();
+    
+    // 每 5 分钟刷新
+    setInterval(fetchStatus, 300000);
+  </script>
+</body>
+</html>
